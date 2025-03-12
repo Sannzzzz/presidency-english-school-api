@@ -1,17 +1,21 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const nodemailer = require("nodemailer");
-const cors = require("cors");  // ✅ Import CORS
+const cors = require("cors");  
 const bodyParser = require("body-parser");
 
 const app = express();
 
-// Middleware
+// ✅ Enable CORS & Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Nodemailer Transporter Setup
+// ✅ Serve static files from the "assets/files" folder
+app.use("/assets/files", express.static(path.join(__dirname, "assets/files")));
+
+// ✅ Nodemailer Transporter Setup
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -20,7 +24,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Handle form submission
+// ✅ Handle form submission (Contact Form)
 app.post('/send-message', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -31,7 +35,7 @@ app.post('/send-message', async (req, res) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: process.env.RECEIVER_EMAIL,
-    subject: `New Contact Form Message from ${name}`,  // ✅ Fixed backticks
+    subject: `New Contact Form Message from ${name}`,
     text: `You have received a new message:\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}`,
   };
 
@@ -44,8 +48,11 @@ app.post('/send-message', async (req, res) => {
   }
 });
 
-// Start server
-const PORT = 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);  // ✅ Fixed backticks
+// ✅ Basic Route to Check Server Status
+app.get("/", (req, res) => {
+  res.send("Backend is running...");
 });
+
+// ✅ Start Server
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
