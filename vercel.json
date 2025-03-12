@@ -11,12 +11,6 @@
         "src": "/(.*)",
         "dest": "server.js"
       }
-    ],
-    "rewrites": [
-      {
-        "source": "/assets/files/:file",
-        "destination": "/assets/files/:file"
-      }
     ]
   }
   
